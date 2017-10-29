@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 26 19:53:32 2017
+
+@author: Marie
+"""
+
+import numpy as np
+import pylab as plt
+#import audioop as aud
+import pyaudio
+
+A = 2
+T1 = 3
+T2 = 5
+N=100
+K = 100
+
+# Création du signal s0
+
+def s(t):
+    s = np.zeros_like(t)
+    for i in range(len(t)):
+        if t[i] < T2:
+            s[i] = A*np.cos(2*np.pi*t[i]/T1)*np.sin(2*np.pi*t[i]/T2)
+    return s
+ 
+t = np.linspace(0,50,1000)
+plt.plot(t,s(t))
+plt.grid()
+plt.axis([0,10,-5,5])
+plt.figure()
+
+
+# On fait la FFT du signal créé
+
+S0 = np.fft.fft(s(t))
+freq = np.fft.fftfreq(len(t), d=0.1)
+plt.subplot(212)
+plt.plot(freq,S0)
+plt.grid()
+plt.figure()
+# Faire apparaître les signaux réels et imaginaires sur le graphe
+#Ne prendre que la partie réelle----> Seulement la partie réelle du signal compte, dans le cas où on fait que la fft et pas aussi la fft inverse comme ici
+
+
+#Programmation de la FFT inverse
+
+
+def FFT_inv(S):
+    f = np.zeros_like(len(t))
+    somme = 0
+    for n in range(len(t)):
+        for k in range(len(t)):
+            somme = somme + S[k]*np.exp(2j*np.pi*n*k/K)
+        f[n]= 1/N*somme
+    return f
+
+
+s2 = FFT_inv(S0)
+plt.plot(t,s2)
+plt.grid()
+plt.axis([0,10,-5,5])
+plt.figure()
+
+            

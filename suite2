@@ -1,0 +1,99 @@
+
+import numpy as np
+import pylab as plt
+#import audioop as aud
+#import pyaudio
+
+A = 1
+T1 = 3
+T2 = 5
+c = 340
+N=1000
+#Te = t[n]/n
+
+# Création du signal s0
+
+
+def s(t):
+    s = np.zeros_like(t)
+    for i in range(len(t)):
+        if t[i] < T2:
+            s[i] = A*np.cos(2*np.pi*t[i]/T1)*np.sin(2*np.pi*t[i]/T2)
+    return s
+ 
+t = np.linspace(0,50,N)
+Te = t[1]
+signal = 2*np.cos(2*np.pi/2*t) + np.sin(2*np.pi/5*t)
+
+plt.plot(t,s(t))
+plt.grid()
+#plt.axis([0,10,-5,5])
+plt.figure()
+
+
+# On fait la FFT du signal créé
+
+S0 = np.fft.fft(s(t))
+freq = np.fft.fftfreq(len(t), d=0.1)
+
+#plt.subplot(212)
+#plt.plot(freq,np.real(S0),label="real")
+#plt.plot(freq,np.imag(S0), label="imag")
+#plt.grid()
+#plt.axis([-1,1,-1000,1000])
+#plt.legend()
+#plt.figure()
+#Ne prendre que la partie réelle----> Seulement la partie réelle du signal compte
+
+
+#Programmation de la FFT inverse
+K = len(S0)
+
+#def FFT_inv(S):
+#    K = len(S)
+x = np.zeros_like(t)
+somme2 = np.zeros_like(t)
+for n in range(N):
+    for i in range(K):
+        somme2[n] = somme2[n] + S0[i]*np.exp(2j*np.pi*n*i/K)
+    x[n]= somme2[n]/N
+   # return x
+
+
+#s2 = FFT_inv(S0)
+#plt.plot(t,s2)
+#plt.grid()
+#plt.axis([0,10,-5,5])
+#plt.figure()
+
+
+#Programmation signal en temps et en espace
+
+#k = w/c
+#w[i]=2*np.pi*i/K
+#Ici K=N
+k=1
+X=5000
+#def ste(S,x):
+#K = len(S0)
+y = np.zeros_like(t)
+somme = np.zeros_like(t)
+for n in range(N):
+    for i in range(K):
+        somme[n] = somme[n] + S0[i]*np.exp(2j*np.pi*n*i/K)*np.exp(-2j*np.pi*i/K/Te*X/c)
+    y[n]= somme[n]/N
+#    return y
+
+plt.plot(t,y)
+plt.grid()
+#plt.axis([0,10,-5,5])
+plt.figure()
+
+
+#
+#s3 = ste(S0,1000)
+#plt.plot(t,s3)
+#plt.grid()
+#plt.axis([0,10,-5,5])
+#plt.figure()
+#
